@@ -11,10 +11,11 @@
         .fn-id {font-weight:bold;position: absolute;left:0;width:50px;text-align: right}
         .fn-time {position:absolute;right:0}
         .fn-file {color:#666}
-        .fn-name {font-weight:bold;color:blue}
+        .fn-name {color:blue}
         .fn-line {cursor:hand;cursor:pointer;margin:8px 0}
         .fn-line:hover {background:lightcyan}
         .fn-params {font-weight:normal;color:#666}
+        .search-highlight { border-bottom: 1px solid black;}
     </style>
 </head>
 
@@ -42,7 +43,12 @@ information</p>
 
 
 <?php if ($traceFile != ''):?>
-    <hr />
+    <hr>
+    <form id="search">
+        <input placeholder="class or method name" type="text" name="search" style="width: 60%">
+        <input type="submit">
+        <button id="restore-hidden">Restore</button>
+    </form>
     <ul class="fn-tree">
     <?php $traceExplorer->render()?>
     </ul>
@@ -61,6 +67,57 @@ information</p>
                 $('#filePath').val($('#xt-select').val());
                 $('#frm').submit();
             });
+
+            $('#search').submit(function (e) {
+                e.preventDefault();
+                var text = $(this).find('[name="search"]').val();
+                if (!text) {
+                    return false;
+                }
+                var $match = $(".fn-name:contains(" + text + ")");
+                if ($match.length > 0) {
+                    storeStatus();
+                    $('.fn-sub').addClass('hidden');
+                    $('.search-highlight').removeClass('search-highlight');
+                    $match.parents('.fn-sub').removeClass('hidden');
+                    $match.closest('.fn-line').addClass('search-highlight');
+                    resetToggleStatus();
+                }
+                return false;
+            });
+
+            $('#restore-hidden').click(function (e) {
+                e.preventDefault();
+                restoreStatus();
+                return false;
+            });
+
+            function storeStatus() {
+                $('.fn-sub').each(function () {
+                    $(this).data('isHidden', $(this).is('.hidden'));
+                });
+            }
+
+            function restoreStatus() {
+                $('.fn-sub').each(function () {
+                    if ($(this).data('isHidden')) {
+                        $(this).addClass('hidden');
+                    }
+                });
+                resetToggleStatus();
+                $('.search-highlight').removeClass('search-highlight');
+            }
+
+            function resetToggleStatus() {
+                $('.fn-sub').each(function () {
+                    var id = $(this).attr('id').split('-').pop();
+                    if ($(this).is('.hidden')) {
+                        $('#fn-' + id).html('[+] ');
+                    } else {
+                        $('#fn-' + id).html('[-] ');
+                    }
+                })
+            }
         });
     </script>
 <?php endif;?>
