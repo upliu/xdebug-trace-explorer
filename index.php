@@ -13,7 +13,12 @@ foreach ($files as $f) {
 }
 
 // also accept custom path
-$traceFile = isset($_GET['filePath'])?$_GET['filePath']:'trace.sample.xt';
+$traceFile = isset($_GET['filePath']) ? $_GET['filePath'] : '';
+
+if (empty($traceFile) && isset($_GET['action']) && $_GET['action'] == 'go_to_last' && count($traceFiles) >= 1)
+{
+    $traceFile = $traceFolder . DIRECTORY_SEPARATOR . $traceFiles[count($traceFiles)-1];
+}
 
 if ($traceFile != '') {
     $traceExplorer = new XtExplorer($traceFile);

@@ -31,6 +31,7 @@ information</p>
     ($traceFile))
         echo
     $traceFile?>"/> <input type="submit" value="Render"/>
+    <a href="?action=go_to_last">Go to last file</a>
 </form>
 <?php if (count($traceFiles)>0):?>
     <p>or pick from lists we found at <?php echo $traceFolder?>:<br/>
@@ -52,75 +53,75 @@ information</p>
     <ul class="fn-tree">
     <?php $traceExplorer->render()?>
     </ul>
-
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('.fn-line').click(function(){
-                var $expand = $(this).find('> .fn-expand');
-                var fnId = $expand.attr('id');
-                $('#sub-'+fnId).toggleClass('hidden');
-                $expand.html($('#sub-'+fnId).hasClass('hidden')?'[+] ':'[-] ');
-            });
-
-            $('#xt-select').change(function() {
-                $('#filePath').val($('#xt-select').val());
-                $('#frm').submit();
-            });
-
-            $('#search').submit(function (e) {
-                e.preventDefault();
-                var text = $(this).find('[name="search"]').val();
-                if (!text) {
-                    return false;
-                }
-                var $match = $(".fn-name:contains(" + text + ")");
-                if ($match.length > 0) {
-                    storeStatus();
-                    $('.fn-sub').addClass('hidden');
-                    $('.search-highlight').removeClass('search-highlight');
-                    $match.parents('.fn-sub').removeClass('hidden');
-                    $match.closest('.fn-line').addClass('search-highlight');
-                    resetToggleStatus();
-                }
-                return false;
-            });
-
-            $('#restore-hidden').click(function (e) {
-                e.preventDefault();
-                restoreStatus();
-                return false;
-            });
-
-            function storeStatus() {
-                $('.fn-sub').each(function () {
-                    $(this).data('isHidden', $(this).is('.hidden'));
-                });
-            }
-
-            function restoreStatus() {
-                $('.fn-sub').each(function () {
-                    if ($(this).data('isHidden')) {
-                        $(this).addClass('hidden');
-                    }
-                });
-                resetToggleStatus();
-                $('.search-highlight').removeClass('search-highlight');
-            }
-
-            function resetToggleStatus() {
-                $('.fn-sub').each(function () {
-                    var id = $(this).attr('id').split('-').pop();
-                    if ($(this).is('.hidden')) {
-                        $('#fn-' + id).html('[+] ');
-                    } else {
-                        $('#fn-' + id).html('[-] ');
-                    }
-                })
-            }
-        });
-    </script>
 <?php endif;?>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.fn-line').click(function(){
+            var $expand = $(this).find('> .fn-expand');
+            var fnId = $expand.attr('id');
+            $('#sub-'+fnId).toggleClass('hidden');
+            $expand.html($('#sub-'+fnId).hasClass('hidden')?'[+] ':'[-] ');
+        });
+
+        $('#xt-select').change(function() {
+            $('#filePath').val($('#xt-select').val());
+            $('#frm').submit();
+        });
+
+        $('#search').submit(function (e) {
+            e.preventDefault();
+            var text = $(this).find('[name="search"]').val();
+            if (!text) {
+                return false;
+            }
+            var $match = $(".fn-name:contains(" + text + ")");
+            if ($match.length > 0) {
+                storeStatus();
+                $('.fn-sub').addClass('hidden');
+                $('.search-highlight').removeClass('search-highlight');
+                $match.parents('.fn-sub').removeClass('hidden');
+                $match.closest('.fn-line').addClass('search-highlight');
+                resetToggleStatus();
+            }
+            return false;
+        });
+
+        $('#restore-hidden').click(function (e) {
+            e.preventDefault();
+            restoreStatus();
+            return false;
+        });
+
+        function storeStatus() {
+            $('.fn-sub').each(function () {
+                $(this).data('isHidden', $(this).is('.hidden'));
+            });
+        }
+
+        function restoreStatus() {
+            $('.fn-sub').each(function () {
+                if ($(this).data('isHidden')) {
+                    $(this).addClass('hidden');
+                }
+            });
+            resetToggleStatus();
+            $('.search-highlight').removeClass('search-highlight');
+        }
+
+        function resetToggleStatus() {
+            $('.fn-sub').each(function () {
+                var id = $(this).attr('id').split('-').pop();
+                if ($(this).is('.hidden')) {
+                    $('#fn-' + id).html('[+] ');
+                } else {
+                    $('#fn-' + id).html('[-] ');
+                }
+            })
+        }
+    });
+</script>
 
 </body>
 </html>
